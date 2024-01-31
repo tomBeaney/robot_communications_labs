@@ -5,7 +5,6 @@
 
 #include "mbed.h"
 #include <chrono>
-#include <cstdio>
 
 
 // Blinking rate in milliseconds
@@ -17,19 +16,31 @@ int length;
 char buffer[BUFF_LENGTH] = {};
 BufferedSerial pc(USBTX, USBRX, 115200);
 // use com 5 for conenction in PUTTY
-int number = 0;
+int  number = 0;
 
+Thread mythread;
 
-int main()
+void threadMethod()
 {
     // Initialise the digital pin LED1 as an output
     DigitalOut led(LED1);
-
-    while (true) {
+    while(true)
+    {
         led = !led; //turn the led to opposite state that it is in
         ThisThread::sleep_for(BLINKING_RATE); //sleep the thread for 500ms
-        length = snprintf(buffer,BUFF_LENGTH,"\r\nHello this is a test"); //create the message using string literal ''
+    }
+}
+
+int main()
+{
+    mythread.start(threadMethod); //start running the thread 
+
+    while (true) {
+
+        length = snprintf(buffer,BUFF_LENGTH,"\r\nHello this is a test %i",number); //create the message using string literal ''
         pc.write(buffer,length); //write the message to the serial port
         ThisThread::sleep_for(chrono::seconds(1)); //sleep for 1 second on the serial thread using chrono library
+        number --;
     }
+    mythread.join(); //join the thread to close it at the end of the program
 }
