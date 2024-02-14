@@ -15,6 +15,8 @@
 int length;
 char buffer[BUFF_LENGTH] = {};
 BufferedSerial pc(USBTX, USBRX, 115200);
+//BufferedSerial pc(PA_11, PA_12, 115200);
+
 // use com 5 for conenction in PUTTY
 int  number = 0;
 
@@ -37,7 +39,8 @@ int main()
 
     while (true) {
 
-        length = snprintf(buffer,BUFF_LENGTH,"\r\nHello this is a test %i",number); //create the message using string literal ''
+        //length = snprintf(buffer,BUFF_LENGTH,"{Data:{Status:Correct %i}}",number); //create the message using string literal ''
+        length = snprintf(buffer,BUFF_LENGTH,"{Data:{Status:\"Correct\"}}\r\n");
         pc.write(buffer,length); //write the message to the serial port
         ThisThread::sleep_for(chrono::seconds(1)); //sleep for 1 second on the serial thread using chrono library
         number --;
